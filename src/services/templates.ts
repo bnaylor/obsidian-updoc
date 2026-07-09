@@ -9,6 +9,11 @@ Attendees: {{attendees}}
 
 - `;
 
+function localDateStr(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 export class TemplateService {
   constructor(private settings: UpdocSettings) {}
 
@@ -45,7 +50,7 @@ export class TemplateService {
 
     const vars: Record<string, string> = {
       title: event.title,
-      date: event.startTime.toISOString().split('T')[0],
+      date: localDateStr(event.startTime),
       time: event.startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
       location: event.location ?? '',
       description: event.description ?? '',

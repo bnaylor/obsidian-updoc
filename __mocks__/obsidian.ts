@@ -34,6 +34,7 @@ export class Setting {
   addText(_cb: unknown) { return this; }
   addButton(_cb: unknown) { return this; }
   addDropdown(_cb: unknown) { return this; }
+  setCta() { return this; }
   setWarning() { return this; }
 }
 export class WorkspaceLeaf {}

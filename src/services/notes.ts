@@ -4,6 +4,11 @@ import { TemplateService } from './templates';
 
 const UNSAFE_CHARS = /[:/\\*?"<>|]/g;
 
+function localDateStr(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 export function expandDateVars(pattern: string, date: Date): string {
   const pad = (n: number) => String(n).padStart(2, '0');
   return pattern
@@ -74,7 +79,7 @@ export class NotesService {
     const lines = [
       '---',
       `meetingId: ${event.id}`,
-      `date: ${event.startTime.toISOString().split('T')[0]}`,
+      `date: ${localDateStr(event.startTime)}`,
       `attendees: ${event.attendees.map(a => a.email).join(', ')}`,
     ];
     if (cssClass) lines.push(`cssclasses: ${cssClass}`);
