@@ -12,6 +12,8 @@ const baseSettings = (): UpdocSettings => ({
   sidebarPosition: 'right',
   filterRules: [],
   templateRules: [],
+  syncEnabled: true,
+  syncMeta: {},
 });
 
 describe('buildAuthUrl', () => {
@@ -42,7 +44,7 @@ describe('AuthService.isConnected', () => {
 
   it('returns true when tokens present', () => {
     const settings = baseSettings();
-    settings.tokens = { accessToken: 'tok', refreshToken: 'ref', expiresAt: Date.now() + 60_000, email: 'a@b.com' };
+    settings.tokens = { accessToken: 'tok', refreshToken: 'ref', expiresAt: Date.now() + 60_000, email: 'a@b.com', scopes: [] };
     const svc = new AuthService(settings, async () => {});
     expect(svc.isConnected()).toBe(true);
   });

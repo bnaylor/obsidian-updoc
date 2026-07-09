@@ -4,7 +4,10 @@ import { UpdocSettings, TokenData } from '../types';
 const AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const USERINFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
-const SCOPES = ['https://www.googleapis.com/auth/calendar.events.readonly'];
+const SCOPES = [
+  'https://www.googleapis.com/auth/calendar.events.readonly',
+  'https://www.googleapis.com/auth/userinfo.email',
+];
 
 export function buildAuthUrl(clientId: string, redirectUri: string): string {
   const url = new URL(AUTH_URL);
@@ -25,7 +28,7 @@ export class AuthService {
   constructor(
     private settings: UpdocSettings,
     private saveSettings: () => Promise<void>,
-    private fetchFn: typeof fetch = fetch,
+    private fetchFn: typeof fetch = fetch.bind(globalThis),
   ) {}
 
   isConnected(): boolean {
@@ -153,6 +156,7 @@ export class AuthService {
       refreshToken: data.refresh_token,
       expiresAt: Date.now() + data.expires_in * 1000,
       email: userInfo.email,
+      scopes: SCOPES,
     };
     await this.saveSettings();
   }

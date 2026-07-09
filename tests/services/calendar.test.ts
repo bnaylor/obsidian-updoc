@@ -10,6 +10,8 @@ const baseSettings = (): UpdocSettings => ({
   sidebarPosition: 'right',
   filterRules: [],
   templateRules: [],
+  syncEnabled: true,
+  syncMeta: {},
 });
 
 const googleItem = (overrides: Record<string, unknown> = {}) => ({

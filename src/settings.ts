@@ -13,6 +13,8 @@ export const DEFAULT_SETTINGS: UpdocSettings = {
   sidebarPosition: 'right',
   filterRules: [],
   templateRules: [],
+  syncEnabled: true,
+  syncMeta: {},
 };
 
 // Interface avoids circular import with main.ts

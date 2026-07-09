@@ -10,6 +10,8 @@ const baseSettings = (): UpdocSettings => ({
   sidebarPosition: 'right',
   filterRules: [],
   templateRules: [],
+  syncEnabled: true,
+  syncMeta: {},
 });
 
 const event = (overrides: Partial<CalendarEvent> = {}): CalendarEvent => ({
