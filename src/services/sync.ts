@@ -57,13 +57,13 @@ export class SyncService {
   ) {}
 
   startFor(file: TFile): void {
+    // Clear pause for this file so navigating back resumes sync
+    const docId = this.getDocId(file);
+    if (docId) this.pausedDocs.delete(docId);
     if (this.activeFile?.path === file.path) return;
     this.stop();
     this.activeFile = file;
     this.currentIntervalMs = LAZY_MS;
-    // Clear pause for this file so navigating back resumes sync
-    const docId = this.getDocId(file);
-    if (docId) this.pausedDocs.delete(docId);
     this.scheduleNext();
   }
 
