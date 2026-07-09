@@ -185,12 +185,7 @@ export function markdownToRequests(body: string): FormattedDoc {
 }
 
 function utf16Len(s: string): number {
-  let len = 0;
-  for (let i = 0; i < s.length; i++) {
-    const code = s.charCodeAt(i);
-    len += (code >= 0xD800 && code <= 0xDBFF) ? 2 : 1;
-  }
-  return len;
+  return s.length;
 }
 
 function parseInline(

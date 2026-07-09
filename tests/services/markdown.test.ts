@@ -209,6 +209,16 @@ describe('markdownToRequests', () => {
     expect(boldReq?.updateTextStyle?.range.startIndex).toBe(1);
     expect(boldReq?.updateTextStyle?.range.endIndex).toBe(3); // 'hi' = 2 chars, starts at 1
   });
+
+  it('handles emoji in inline text without index misalignment (utf16Len = s.length)', () => {
+    const { plainText, inlineRequests } = markdownToRequests('Say **hi 👋** ok');
+    expect(plainText).toBe('Say hi 👋 ok');
+    const boldReq = inlineRequests.find(r => r.updateTextStyle?.textStyle.bold);
+    // offset 1, 'Say ' = 4 UTF-16 units → startIndex = 5
+    // 'hi 👋' = h(1)+i(1)+space(1)+👋(2) = 5 UTF-16 units → endIndex = 10
+    expect(boldReq?.updateTextStyle?.range.startIndex).toBe(5);
+    expect(boldReq?.updateTextStyle?.range.endIndex).toBe(10);
+  });
 });
 
 describe('round-trip: markdownToRequests → requestsToMarkdown', () => {
