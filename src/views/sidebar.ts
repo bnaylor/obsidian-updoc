@@ -2,6 +2,7 @@ import { ItemView, WorkspaceLeaf } from 'obsidian';
 import { CalendarEvent, UpdocSettings } from '../types';
 import { CalendarService } from '../services/calendar';
 import { NotesService } from '../services/notes';
+import { SyncService } from '../services/sync';
 
 export const SIDEBAR_VIEW_TYPE = 'updoc-meetings';
 
@@ -15,6 +16,7 @@ export class MeetingsSidebar extends ItemView {
     private settings: UpdocSettings,
     private calendar: CalendarService,
     private notes: NotesService,
+    private sync: SyncService | null = null,
   ) {
     super(leaf);
   }
@@ -91,6 +93,30 @@ export class MeetingsSidebar extends ItemView {
       openBtn.addEventListener('click', () => {
         this.app.workspace.getLeaf('tab').openFile(existing[0]);
       });
+
+      // Check if the first note is linked to a Google Doc
+      const file = existing[0];
+      const docId: string | undefined = (this.app.metadataCache.getFileCache(file) as { frontmatter?: Record<string, unknown> })?.frontmatter?.['googleDocId'] as string | undefined;
+
+      if (docId) {
+        const meta = this.settings.syncMeta[docId];
+        const statusText = meta ? `Synced` : 'Linked';
+        actions.createEl('span', { text: statusText, cls: 'updoc-sync-status' });
+      } else {
+        const publishBtn = actions.createEl('button', { text: 'Publish to Google Docs', cls: 'updoc-btn' });
+        publishBtn.addEventListener('click', async () => {
+          publishBtn.disabled = true;
+          publishBtn.textContent = 'Publishing…';
+          try {
+            await this.sync?.publishNote(file, event.title);
+            await this.render();
+          } catch (e) {
+            publishBtn.disabled = false;
+            publishBtn.textContent = 'Publish to Google Docs';
+            console.error('[updoc] publish failed:', e);
+          }
+        });
+      }
     }
 
     const createBtn = actions.createEl('button', { text: 'Create Note', cls: 'updoc-btn updoc-btn-primary' });
