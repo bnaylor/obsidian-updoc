@@ -16,7 +16,7 @@ export class MeetingsSidebar extends ItemView {
     private settings: UpdocSettings,
     private calendar: CalendarService,
     private notes: NotesService,
-    private sync: SyncService | null = null,
+    private sync: SyncService,
   ) {
     super(leaf);
   }
@@ -108,7 +108,7 @@ export class MeetingsSidebar extends ItemView {
           publishBtn.disabled = true;
           publishBtn.textContent = 'Publishing…';
           try {
-            await this.sync?.publishNote(file, event.title);
+            await this.sync.publishNote(file, event.title);
             await this.render();
           } catch (e) {
             publishBtn.disabled = false;
