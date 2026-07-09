@@ -36,7 +36,13 @@ export function requestsToMarkdown(doc: GDocsDocument): string {
     if (isCheckbox) {
       prefix = isChecked ? '- [x] ' : '- [ ] ';
     } else if (isBullet) {
-      prefix = '- ';
+      // Check if this is an ordered list
+      const isOrdered = nestingLevel && (
+        nestingLevel.glyphType === 'DECIMAL' ||
+        nestingLevel.glyphType === 'ALPHA' ||
+        nestingLevel.glyphType === 'ROMAN'
+      );
+      prefix = isOrdered ? '1. ' : '- ';
     } else {
       const style = para.paragraphStyle?.namedStyleType ?? '';
       if (style.startsWith('HEADING_')) {

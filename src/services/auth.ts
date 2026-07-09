@@ -72,6 +72,7 @@ export class AuthService {
     }
 
     const data = await response.json() as { access_token: string; expires_in: number };
+    // scopes are preserved from the existing token; only a full reconnect adds new scopes
     this.settings.tokens = {
       ...this.settings.tokens!,
       accessToken: data.access_token,

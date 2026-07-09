@@ -64,6 +64,19 @@ describe('requestsToMarkdown', () => {
     expect(requestsToMarkdown(d)).toContain('- Item one');
   });
 
+  it('renders a numbered list as 1. prefix', () => {
+    const para: GDocsParagraph = {
+      elements: [{ textRun: { content: 'First item\n' } }],
+      bullet: { listId: 'list1' },
+    };
+    const d: GDocsDocument = {
+      documentId: 'd', title: 'T',
+      body: { content: [{ paragraph: para }] },
+      lists: { list1: { listProperties: { nestingLevels: [{ glyphType: 'DECIMAL' }] } } },
+    };
+    expect(requestsToMarkdown(d)).toContain('1. First item');
+  });
+
   it('renders an unchecked checkbox', () => {
     const para: GDocsParagraph = {
       elements: [{ textRun: { content: 'Task\n' } }],
