@@ -21,7 +21,17 @@ export class ItemView {
 export class Modal {
   contentEl = {
     empty: () => {},
-    createEl: (_tag: string, _opts?: unknown) => ({ addEventListener: () => {}, value: '' }),
+    createEl: (_tag: string, _opts?: unknown) => ({
+      addEventListener: () => {},
+      value: '',
+      style: {},
+      createDiv: (_opts?: unknown) => ({ style: {}, createEl: () => ({ addEventListener: () => {} }) }),
+    }),
+    createDiv: (_opts?: unknown) => ({
+      style: {},
+      createEl: (_tag: string, _opts?: unknown) => ({ addEventListener: () => {}, style: {} }),
+      createDiv: (_opts?: unknown) => ({ style: {}, createEl: () => ({ addEventListener: () => {} }) }),
+    }),
   };
   constructor(public app: unknown) {}
   open() {}

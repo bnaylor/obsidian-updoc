@@ -80,3 +80,65 @@ export class RuleEditorModal extends Modal {
 
   onClose(): void { this.contentEl.empty(); }
 }
+
+export class ConflictModal extends Modal {
+  constructor(
+    app: App,
+    private localContent: string,
+    private remoteContent: string,
+    private onUseMine: () => Promise<void>,
+    private onUseTheirs: () => Promise<void>,
+  ) {
+    super(app);
+  }
+
+  onOpen(): void {
+    const { contentEl } = this;
+    contentEl.createEl('h2', { text: 'Sync Conflict' });
+    contentEl.createEl('p', {
+      text: 'This note was edited in both Obsidian and Google Docs since the last sync.',
+    });
+
+    const panels = contentEl.createDiv();
+    panels.style.display = 'flex';
+    panels.style.gap = '16px';
+
+    const localPanel = panels.createDiv();
+    localPanel.style.flex = '1';
+    localPanel.createEl('h3', { text: 'Your Version (Obsidian)' });
+    const localPre = localPanel.createEl('pre');
+    localPre.textContent = this.localContent;
+    localPre.style.overflow = 'auto';
+    localPre.style.maxHeight = '400px';
+
+    const remotePanel = panels.createDiv();
+    remotePanel.style.flex = '1';
+    remotePanel.createEl('h3', { text: 'Google Docs Version' });
+    const remotePre = remotePanel.createEl('pre');
+    remotePre.textContent = this.remoteContent;
+    remotePre.style.overflow = 'auto';
+    remotePre.style.maxHeight = '400px';
+
+    const actions = contentEl.createDiv();
+    actions.style.display = 'flex';
+    actions.style.gap = '8px';
+    actions.style.marginTop = '16px';
+
+    const mineBtn = actions.createEl('button', { text: 'Use Mine', cls: 'mod-cta' });
+    mineBtn.addEventListener('click', async () => {
+      await this.onUseMine();
+      this.close();
+    });
+
+    const theirsBtn = actions.createEl('button', { text: 'Use Theirs' });
+    theirsBtn.addEventListener('click', async () => {
+      await this.onUseTheirs();
+      this.close();
+    });
+
+    const cancelBtn = actions.createEl('button', { text: 'Cancel' });
+    cancelBtn.addEventListener('click', () => this.close());
+  }
+
+  onClose(): void { this.contentEl.empty(); }
+}
