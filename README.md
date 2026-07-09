@@ -2,7 +2,7 @@
 
 **Google Calendar & Google Docs seamless integration for Obsidian.**
 
-Why reinvent the text editor when Obsidian already perfected it? `updoc` brings the best parts of standalone document-sync and calendar workflows directly into your Obsidian vault—giving you automated meeting notes, smart templating, and real-time two-way Google Docs synchronization without leaving your local Markdown ecosystem.
+Why [reinvent the text editor](https://github.com/bnaylor/updoc) when [Obsidian](https://obsidian.md/) already perfected it? `updoc` brings the best parts of standalone document-sync and calendar workflows directly into your Obsidian vault—giving you automated meeting notes, smart templating, and real-time two-way Google Docs synchronization without leaving your local Markdown ecosystem.
 
 ---
 
