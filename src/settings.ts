@@ -34,6 +34,7 @@ export class UpdocSettingTab extends PluginSettingTab {
     this.renderAccountSection(containerEl);
     this.renderOrganizationSection(containerEl);
     this.renderRulesSection(containerEl);
+    this.renderSyncSection(containerEl);
   }
 
   private renderAccountSection(el: HTMLElement): void {
@@ -151,5 +152,37 @@ export class UpdocSettingTab extends PluginSettingTab {
         this.display();
       }).open();
     }));
+  }
+
+  private renderSyncSection(el: HTMLElement): void {
+    el.createEl('h2', { text: 'Sync' });
+
+    if (this.auth.needsScopeUpgrade()) {
+      const notice = el.createEl('p', {
+        text: 'Sync requires additional permissions — please disconnect and reconnect your Google Account.',
+        cls: 'setting-item-description',
+      });
+      notice.style.color = 'var(--text-warning)';
+      new Setting(el)
+        .setName('Reconnect to enable sync')
+        .addButton(b => b.setButtonText('Reconnect').setCta().onClick(async () => {
+          try {
+            await this.auth.startOAuthFlow();
+            this.display();
+          } catch (e) {
+            console.error('OAuth failed:', e);
+          }
+        }));
+    }
+
+    new Setting(el)
+      .setName('Enable background sync')
+      .setDesc('Automatically sync linked notes with Google Docs every 30 seconds.')
+      .addToggle(t => t
+        .setValue(this.plugin.settings.syncEnabled)
+        .onChange(async v => {
+          this.plugin.settings.syncEnabled = v;
+          await this.plugin.saveSettings();
+        }));
   }
 }
