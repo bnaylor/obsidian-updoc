@@ -91,3 +91,44 @@ describe('AuthService.getValidAccessToken', () => {
     expect(settings.tokens).toBeNull();
   });
 });
+
+describe('AuthService.needsScopeUpgrade', () => {
+  it('returns false when no tokens', () => {
+    const svc = new AuthService(baseSettings(), async () => {});
+    expect(svc.needsScopeUpgrade()).toBe(false);
+  });
+
+  it('returns true when tokens lack drive.file scope', () => {
+    const settings = baseSettings();
+    settings.tokens = {
+      accessToken: 'tok', refreshToken: 'ref', expiresAt: Date.now() + 60_000,
+      email: 'a@b.com', scopes: ['https://www.googleapis.com/auth/calendar.events.readonly'],
+    };
+    const svc = new AuthService(settings, async () => {});
+    expect(svc.needsScopeUpgrade()).toBe(true);
+  });
+
+  it('returns false when tokens have all required scopes', () => {
+    const settings = baseSettings();
+    settings.tokens = {
+      accessToken: 'tok', refreshToken: 'ref', expiresAt: Date.now() + 60_000,
+      email: 'a@b.com',
+      scopes: [
+        'https://www.googleapis.com/auth/calendar.events.readonly',
+        'https://www.googleapis.com/auth/drive.file',
+        'https://www.googleapis.com/auth/documents',
+      ],
+    };
+    const svc = new AuthService(settings, async () => {});
+    expect(svc.needsScopeUpgrade()).toBe(false);
+  });
+});
+
+describe('buildAuthUrl scope', () => {
+  it('includes drive.file and documents scopes', () => {
+    const url = new URL(buildAuthUrl('cid', 'http://localhost/cb'));
+    const scope = url.searchParams.get('scope') ?? '';
+    expect(scope).toContain('drive.file');
+    expect(scope).toContain('documents');
+  });
+});

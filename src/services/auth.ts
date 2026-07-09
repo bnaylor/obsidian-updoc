@@ -7,6 +7,8 @@ const USERINFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo';
 const SCOPES = [
   'https://www.googleapis.com/auth/calendar.events.readonly',
   'https://www.googleapis.com/auth/userinfo.email',
+  'https://www.googleapis.com/auth/drive.file',
+  'https://www.googleapis.com/auth/documents',
 ];
 
 export function buildAuthUrl(clientId: string, redirectUri: string): string {
@@ -33,6 +35,13 @@ export class AuthService {
 
   isConnected(): boolean {
     return this.settings.tokens !== null;
+  }
+
+  needsScopeUpgrade(): boolean {
+    if (!this.settings.tokens) return false;
+    const scopes = this.settings.tokens.scopes ?? [];
+    return !scopes.includes('https://www.googleapis.com/auth/drive.file') ||
+      !scopes.includes('https://www.googleapis.com/auth/documents');
   }
 
   async getValidAccessToken(): Promise<string> {
@@ -144,7 +153,7 @@ export class AuthService {
 
     if (!response.ok) throw new Error('Authorization code exchange failed');
 
-    const data = await response.json() as { access_token: string; refresh_token: string; expires_in: number };
+    const data = await response.json() as { access_token: string; refresh_token: string; expires_in: number; scope: string };
 
     const userInfoResponse = await this.fetchFn(USERINFO_URL, {
       headers: { Authorization: `Bearer ${data.access_token}` },
@@ -156,7 +165,7 @@ export class AuthService {
       refreshToken: data.refresh_token,
       expiresAt: Date.now() + data.expires_in * 1000,
       email: userInfo.email,
-      scopes: SCOPES,
+      scopes: data.scope ? data.scope.split(' ') : [],
     };
     await this.saveSettings();
   }
