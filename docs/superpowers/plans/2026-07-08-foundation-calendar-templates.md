@@ -81,7 +81,7 @@ interface Attendee { email: string; displayName?: string; }
   "version": "0.1.0",
   "minAppVersion": "1.4.0",
   "description": "Google Calendar & Docs integration for Obsidian",
-  "author": "Ben Naylor",
+  "author": "Brian Naylor",
   "authorUrl": "",
   "isDesktopOnly": true
 }
